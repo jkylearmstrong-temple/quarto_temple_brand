@@ -1,0 +1,28 @@
+---
+title: "Temple University Brand Extension Test"
+subtitle: "Center for Biostatistics & Epidemiology"
+author: "J. Kyle Armstrong"
+date: today
+format: html
+---
+
+# Welcome to CBE
+
+This is a sample document to verify that the **Temple Brand Extension** is loaded and rendering correctly.
+
+## Brand Identity Colors
+
+The primary colors defined by the brand should be:
+- **Cherry:** `#a41e35` (applied to headings and links)
+- **Black:** `#1d1d1d` (applied to text)
+- **Eggshell:** `#f2eee8` (applied to inline code backgrounds)
+
+Let's test inline code rendering: `library(ggplot2)`. The background should be a warm eggshell color.
+
+Let's test links: [CBE Website](https://medicine.temple.edu/research/research-centers/center-biostatistics-epidemiology). This link should be underlined and colored in Temple Cherry.
+
+## Logo Test
+
+Below is the logo which is defined by the brand metadata:
+
+![Temple T Logo](_extensions/temple/Temple_T_logo.png){width=150px}

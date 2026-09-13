@@ -45,6 +45,8 @@ local function table_concat(t1,t2)
 end
 
 function Meta(m)
+  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok
+
 --[[
 This function checks that the value the user set is ok and stops with an error message if no.
 yamlelement: the yaml metadata. e.g. m["coverpage-theme"]["page-align"]
@@ -52,14 +54,10 @@ yamltext: page, how to print the yaml value in the error message. e.g. coverpage
 okvals: a text table of ok styles. e.g. {"right", "center"}
 --]]
   local function check_yaml (yamlelement, yamltext, okvals)
-    choice = pandoc.utils.stringify(yamlelement)
+    local choice = pandoc.utils.stringify(yamlelement)
     if not has_value(okvals, choice) then
-      print("\n\ntitlepage extension error: " .. yamltext .. " is set to " .. choice .. ". It can be " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".\n\n")
-      return false
-    else
-      return true
+      error("titlepage extension error: " .. yamltext .. " is set to " .. choice .. ". It must be one of: " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".")
     end
-
     return true
   end
 

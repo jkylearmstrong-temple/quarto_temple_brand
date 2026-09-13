@@ -1,0 +1,5 @@
+titlepage: academic
+
+titlepage-theme:
+  page-align: center
+  title-style: doublelinetight

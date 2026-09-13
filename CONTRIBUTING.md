@@ -13,3 +13,18 @@ Code of conduct & licensing
 Contact
 
 For brand asset permissions or questions about Temple trademarks, contact kevin.haugh@temple.edu and claweb@temple.edu.
+
+
+Developer notes
+
+- Run luacheck on the titlepage filters:
+
+    luacheck _extensions/titlepage/*.lua
+
+- Recommended: enable Git LFS for fonts and images in _extensions/titlepage:
+
+    git lfs install
+    git lfs track "_extensions/titlepage/images/*"
+    git lfs track "_extensions/titlepage/fonts/**"
+
+This repository includes a GitHub Actions workflow at .github/workflows/lua-lint.yml that runs luacheck on push/PR for the titlepage extension.

@@ -90,6 +90,19 @@ If you are developing or modifying the brand extension itself in this repository
 
 ---
 
+## Brand Review Workflow
+
+For Temple MarCom or other institutional brand reviewers:
+
+- Open a focused issue or PR for each logo, asset, palette, typography, or policy change that needs approval.
+- Prefer inviting a Temple-owned GitHub username or team alias for in-repo review rather than posting personal contact details in a public thread.
+- If GitHub access is not available, collect invite/contact details in a private channel and summarize the resulting approval decision back in the issue or PR without publishing personal email addresses.
+- Treat repository review access as read-only unless a broader collaborator role is explicitly requested and approved.
+
+This keeps review feedback attached to the exact change being proposed while avoiding publication of individual email addresses in this public repository.
+
+---
+
 ## License
 
 Dual-licensed at your option under either:

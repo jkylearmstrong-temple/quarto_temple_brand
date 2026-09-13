@@ -1,8 +1,143 @@
 title: Temple Brand
 author: J. Kyle Armstrong
-version: 1.0.0
+version: 1.1.0
 quarto-required: ">=1.6.0"
 contributes:
+  # Applies brand.yml (colors, fonts, logo) to every document in the project.
   metadata:
     project:
       brand: brand.yml
+
+  # Format defaults live here, not in brand.yml: Quarto only reads
+  # `defaults.bootstrap` and `defaults.quarto` from a brand file, so
+  # per-format keys there are silently ignored.
+  formats:
+    # format: temple-html
+    html:
+      toc: true
+      toc-depth: 3
+      number-sections: false
+      code-tools: true
+      df-print: paged
+      fig-align: center
+      cap-location: bottom
+
+    # format: temple-typst (PDF without a LaTeX install)
+    typst:
+      toc: true
+      number-sections: true
+      margin:
+        x: 1in
+        y: 1in
+
+    # format: temple-revealjs
+    revealjs:
+      transition: fade
+      slide-number: true
+      footer: >
+        Center for Biostatistics & Epidemiology |
+        Lewis Katz School of Medicine at Temple University
+
+    # format: temple-pdf (LaTeX, nmfs-opensci/quarto_titlepages title page)
+    # The titlepage extension ships alongside this one; the relative paths
+    # hold whether it is installed as _extensions/<name> or
+    # _extensions/<org>/<name>.
+    pdf:
+      filters:
+        - ../titlepage/titlepage-theme.lua
+        - ../titlepage/coverpage-theme.lua
+      template-partials:
+        - ../titlepage/_coverpage.tex
+        - ../titlepage/_author-affiliation-themes.tex
+        - ../titlepage/_header-footer-date-themes.tex
+        - ../titlepage/_title-themes.tex
+        - ../titlepage/_titlepage.tex
+        - ../titlepage/before-body.tex
+        - ../titlepage/pandoc.tex
+
+      documentclass: scrartcl
+      classoption: ["oneside", "open=any"]
+      number-sections: true
+      toc: true
+      toc-depth: 3
+      colorlinks: true
+      linkcolor: "templecherry"
+      urlcolor: "templecherry"
+      include-in-header:
+        text: |
+          \definecolor{templecherry}{HTML}{a41e35}
+          \definecolor{templeNightOwl}{HTML}{005a70}
+          \definecolor{templeBlack}{HTML}{000000}
+          \definecolor{templeBookNook}{HTML}{fff2e8}
+
+      titlepage: "vline"
+      titlepage-logo: "Temple_T_logo.png"
+      titlepage-header: |
+        Lewis Katz School of Medicine at Temple University\
+        Department of Biomedical Education and Data Science
+      titlepage-footer: |
+        Center for Biostatistics & Epidemiology\
+        https://medicine.temple.edu/research/research-centers/center-biostatistics-epidemiology
+      titlepage-theme:
+        # Single quotes: YAML treats backslashes in them literally.
+        elements:
+          - '\logoblock'
+          - '\headerblock'
+          - '\vfill'
+          - '\titleblock'
+          - '\vfill'
+          - '\authorblock'
+          - '\affiliationblock'
+          - '\dateblock'
+          - '\footerblock'
+        page-html-color: "ffffff"
+        page-text-align: left
+        page-fontfamily: "Latin Modern Sans"
+        vrule-width: "6pt"
+        vrule-color: "templecherry"
+        vrule-align: left
+        vrule-space-after: "18pt"
+        title-style: plain
+        title-color: "templecherry"
+        title-fontsize: 28
+        title-spacing: 34
+        title-fontstyle: ["bfseries"]
+        title-align: left
+        title-space-after: "0.15in"
+        subtitle-style: plain
+        subtitle-color: "templeBlack"
+        subtitle-fontsize: 16
+        subtitle-spacing: 20
+        subtitle-fontstyle: ["textit"]
+        subtitle-align: left
+        subtitle-space-after: "0.1in"
+        author-style: "superscript"
+        author-fontsize: 12
+        author-spacing: 16
+        author-align: left
+        author-space-after: "0.05in"
+        affiliation-style: "numbered-list"
+        affiliation-fontsize: 10
+        affiliation-spacing: 14
+        affiliation-align: left
+        affiliation-space-after: "0.1in"
+        date-style: plain
+        date-fontsize: 10
+        date-spacing: 14
+        date-fontstyle: ["textit"]
+        date-align: left
+        date-space-after: "0.15in"
+        header-style: plain
+        header-fontsize: 10
+        header-spacing: 14
+        header-align: left
+        header-space-after: "0.5in"
+        footer-style: plain
+        footer-fontsize: 9
+        footer-spacing: 12
+        footer-align: left
+        footer-space-after: "0in"
+        # A LaTeX length: the template uses it as \includegraphics[width=...].
+        logo-size: '0.12\textwidth'
+        logo-align: left
+        logo-space-after: "0.3in"

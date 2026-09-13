@@ -2,6 +2,21 @@
 
 All notable changes to the Temple University Quarto Brand Extension will be documented in this file.
 
+## [1.1.0] - 2026-09-13
+
+### Added
+- **Formats:** `_extension.yml` contributes `temple-html`, `temple-pdf` (LaTeX with the Temple title page), `temple-typst`, and `temple-revealjs`.
+
+### Fixed
+- **Format settings were ignored.** The `defaults: html/pdf/revealjs/titlepage-pdf` blocks in `brand.yml` never took effect—Quarto reads only `defaults.bootstrap` and `defaults.quarto` from a brand file. They now live in the formats above. The `lumen` and `simple` theme settings were dropped, because naming a theme there would override the brand.
+- **`temple-pdf` title page failed to compile** once applied: `logo-size` was a bare number, which `\includegraphics` rejects. It is now `0.12\textwidth`.
+- **Drifted brand file removed.** The root `_brand.yml` differed from `_extensions/temple/brand.yml` and pointed at a logo that doesn't exist (`Temple_T_logo_svg.png`).
+
+### Changed
+- **Palette and fonts follow Temple's current brand** ([CLA Logos and Brand](https://liberalarts.temple.edu/marcom/logos-and-brand)). The old secondary colors (Taupe, Icy Blue, Lime, Eggshell, Ochre, Geranium, Dark Blue) are replaced by Clear Skies, Book Nook, and the formal and casual accents; black is `#000000` instead of `#1d1d1d`. Body text is Faustina and headings Roboto, replacing Source Sans 3. Semantic roles and the LaTeX colors (`templeNightOwl`, `templeBookNook`) were remapped to match.
+- The title page extension moved from `_extensions/nmfs-opensci/titlepage` to `_extensions/titlepage`, so `temple` and `titlepage` sit side by side in this repo and in installed projects (`_extensions/<name>` or `_extensions/<org>/<name>`), which `temple-pdf` relies on.
+- `example.qmd` renders every Temple format.
+
 ## [1.0.0] - 2026-06-23
 
 ### Added

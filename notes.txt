@@ -1,0 +1,32 @@
+1. Quarto YAML & Template Export Notes
+Your YAML configuration is excellent and provides a clean, publication-ready framework for multi-format publishing (HTML, DOCX, PDF, and Typst).
+
+Key Elements to Export to Your Template Repo:
+Multi-Theme HTML with Left Expandable TOC:
+yaml
+html:
+  smooth-scroll: true
+  theme:
+    light: flatly
+    dark: darkly
+  toc: true
+  toc-location: left
+  toc-expand: true
+  lot: true  # List of Tables
+  lof: true  # List of Figures
+  number-depth: 6
+  number-sections: true
+  section-divs: true
+Native Typst PDF Engine (Lightning Fast & No TeX Live Required):
+yaml
+typst:
+  toc: true
+  number-sections: true
+  fontsize: 11pt
+  margin:
+    x: 1in
+    y: 1in
+Advanced LaTeX Header Inclusions (For PDF):
+\usepackage[noblocks]{authblk}: Formats complex multi-author and multi-institution affiliations cleanly.
+\usepackage{lscape} with \blandscape / \elandscape helper commands: Allows you to switch wide tables (like Table 1 or Table 2) into landscape orientation on PDF pages.
+template-partials: [title.tex]: Customizes the title page layout.

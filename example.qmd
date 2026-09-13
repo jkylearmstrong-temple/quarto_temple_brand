@@ -2,11 +2,19 @@
 title: "Temple University Brand Extension Test"
 subtitle: "Center for Biostatistics & Epidemiology"
 author:
-  - name: J. Kyle Armstrong
+  - name: Huaqing Zhao, PhD
+    email: zhao@temple.edu
+    affiliations:
+      - ref: lksom
+  - name: J Kyle Armstrong, PhD
     email: j.kyle.armstrong@temple.edu
+    orcid: 0000-0002-4269-0121
     corresponding: true
     affiliations:
-      - name: Lewis Katz School of Medicine at Temple University
+      - ref: lksom
+affiliations:
+  - id: lksom
+    name: Lewis Katz School of Medicine at Temple University
 date: today
 format:
   temple-html: default
@@ -22,13 +30,13 @@ This is a sample document to verify that the **Temple Brand Extension** is loade
 
 The primary colors defined by the brand should be:
 
-- **Cherry:** `#a41e35` (applied to headings and links)
+- **Cherry:** `#a41e35` (applied to headings)
 - **Black:** `#000000` (applied to text)
 - **Book Nook:** `#fff2e8` (applied to inline code backgrounds)
 
 Let's test inline code rendering: `library(ggplot2)`. The background should be a warm Book Nook color.
 
-Let's test links: [CBE Website](https://medicine.temple.edu/research/research-centers/center-biostatistics-epidemiology). This link should be underlined and colored in Temple Cherry.
+Let's test links: [CBE Website](https://medicine.temple.edu/research/research-centers/center-biostatistics-epidemiology). This link should be underlined (HTML) and colored in standard link blue `#0563c1`.
 
 ## Logo Test
 

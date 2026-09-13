@@ -63,11 +63,11 @@ $if(titlepage-theme.logo-align)$
 }
 $endif$
 $if(titlepage-theme.date-align)$
-%% Titles
+%% Date
 \newcommand{\titlepagedatealign}{
-\ifthenelse{\equal{$titlepage-theme.title-align$}{right}}{\raggedleft}{}
-\ifthenelse{\equal{$titlepage-theme.title-align$}{center}}{\centering}{}
-\ifthenelse{\equal{$titlepage-theme.title-align$}{left}}{\raggedright}{}
+\ifthenelse{\equal{$titlepage-theme.date-align$}{right}}{\raggedleft}{}
+\ifthenelse{\equal{$titlepage-theme.date-align$}{center}}{\centering}{}
+\ifthenelse{\equal{$titlepage-theme.date-align$}{left}}{\raggedright}{}
 }
 $endif$
 
@@ -124,7 +124,7 @@ $else$$endif$}
 \newcommand{\dateblock}{$if(date)$
 $if(titlepage-theme.date-color)$\textcolor{$titlepage-theme.date-color$}$endif${$if(titlepage-theme.date-align)$\titlepagedatealign
 $endif$$if(titlepage-theme.date-fontfamily)$\titlepagedatefont
-$endif$\titlepagedateblock}
+$endif$\titlepagedateblock\par}
 
 \vspace{$if(titlepage-theme.date-space-after)$$titlepage-theme.date-space-after$$else$0pt$endif$}
 $else$$endif$}

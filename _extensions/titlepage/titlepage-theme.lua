@@ -42,6 +42,8 @@ local function dump(o)
 end
 
 function Meta(m)
+  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok
+
 --[[
 This function checks that the value the user set is ok and stops with an error message if no.
 yamlelement: the yaml metadata. e.g. m["titlepage-theme"]["page-align"]
@@ -49,14 +51,10 @@ yamltext: page, how to print the yaml value in the error message. e.g. titlepage
 okvals: a text table of ok styles. e.g. {"right", "center"}
 --]]
   local function check_yaml (yamlelement, yamltext, okvals)
-    choice = pandoc.utils.stringify(yamlelement)
+    local choice = pandoc.utils.stringify(yamlelement)
     if not has_value(okvals, choice) then
-      print("\n\ntitlepage extension error: " .. yamltext .. " is set to " .. choice .. ". It can be " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".\n\n")
-      return false
-    else
-      return true
+      error("titlepage extension error: " .. yamltext .. " is set to " .. choice .. ". It must be one of: " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".")
     end
-
     return true
   end
 
@@ -76,7 +74,7 @@ okvals: a text table of ok styles. e.g. {"plain", "two-column"}
         m[page .. "-style-code"][styleelement] = {}
         m[page .. "-style-code"][styleelement][getVal(yamlelement)] = true
       else
-        error()
+        error("titlepage extension error: invalid value for " .. yamltext)
       end
     else
 --      print("\n\ntitlepage extension error: " .. yamltext .. " needs a value. Should have been set in titlepage-theme lua filter.\n\n")

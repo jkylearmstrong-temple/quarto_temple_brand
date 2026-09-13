@@ -11,9 +11,12 @@ local function getVal(s)
   return pandoc.utils.stringify(s)
 end
 
-function script_path()
-   local str = debug.getinfo(2, "S").source:sub(2)
-   return str:match("(.*/)")
+local function script_path()
+  local source = debug.getinfo(2, "S").source
+  if source:sub(1,1) == "@" then source = source:sub(2) end
+  local dir = source:match("^(.*[\\\/])")
+  if dir then return dir end
+  return "./"
 end
 
 local function has_value (tab, val)
@@ -45,7 +48,7 @@ local function table_concat(t1,t2)
 end
 
 function Meta(m)
-  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok
+  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok, isatheme
 
 --[[
 This function checks that the value the user set is ok and stops with an error message if no.
@@ -201,7 +204,7 @@ This function assigns the themevals to the meta data
     if m['coverpage-file'] then
       m["coverpage-true"] = true
       if not isEmpty(m['coverpage-theme']) then
-        print("\n\ntitlepage extension message: since you passed in a static coverpage file, coverpage-theme is ignored.n\n")
+        print("\n\ntitlepage extension message: since you passed in a static coverpage file, coverpage-theme is ignored.\n\n")
       end
     end
     if choice == "none" then
@@ -223,7 +226,7 @@ Set up the demos
   if choice == "great-wave" then
     if isEmpty(m['coverpage-bg-image']) then
 --      m['coverpage-bg-image'] = script_path().."images/TheGreatWaveoffKanagawa.jpeg"
-      m['coverpage-bg-image'] = "img/TheGreatWaveoffKanagawa.jpeg"
+      m['coverpage-bg-image'] = script_path().."images/TheGreatWaveoffKanagawa.jpeg"
     end
     if isEmpty(m['coverpage-title']) then
       m['coverpage-title'] = "quarto_titlepages"
@@ -241,7 +244,7 @@ Set up the demos
   if choice == "otter" then
     if isEmpty(m['coverpage-bg-image']) then
 --      m['coverpage-bg-image'] = script_path().."images/otter-bar.jpeg"
-        m['coverpage-bg-image'] = "img/otter-bar.jpeg"
+        m['coverpage-bg-image'] = script_path().."images/otter-bar.jpeg"
     end
     if isEmpty(m['coverpage-title']) then
       m['coverpage-title'] = "Otters"

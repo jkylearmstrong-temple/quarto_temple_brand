@@ -2,18 +2,22 @@ name: Lua lint
 
 on:
   push:
-    paths: |
-      _extensions/titlepage/**
+    paths:
+      - _extensions/titlepage/**
   pull_request:
-    paths: |
-      _extensions/titlepage/**
+    paths:
+      - _extensions/titlepage/**
 
 jobs:
   luacheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install luacheck
-        run: sudo apt-get update && sudo apt-get install -y luacheck
+      - name: Install luacheck and lua
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luacheck lua5.4
       - name: Run luacheck
         run: luacheck _extensions/titlepage/*.lua
+      - name: Run Lua filter tests
+        run: bash tests/run-lua-tests.sh

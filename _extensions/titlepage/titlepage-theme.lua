@@ -42,7 +42,7 @@ local function dump(o)
 end
 
 function Meta(m)
-  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok
+  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok, isatheme
 
 --[[
 This function checks that the value the user set is ok and stops with an error message if no.
@@ -412,7 +412,7 @@ This function assigns the themevals to the meta data
     end
   end
   if m['titlepage-file'] and not isEmpty(m['titlepage-theme']) then
-    print("\n\ntitlepage extension message: since you passed in a static titlepage file, titlepage-theme is ignored.n\n")
+    print("\n\ntitlepage extension message: since you passed in a static titlepage file, titlepage-theme is ignored.\n\n")
   end
   if not m['titlepage-file'] and choice ~= "none" then
     if isEmpty(m['titlepage-theme']) then

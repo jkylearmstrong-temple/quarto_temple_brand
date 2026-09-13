@@ -1,0 +1,15 @@
+Titlepage: clean Lua filters, add linting and tests
+
+Why: fixes cross-platform and global-variable issues in titlepage/coverpage Lua filters, improves robustness for demo image paths, and adds lint/test infrastructure so CI validates the filters.
+
+What:
+- Made script_path cross-platform and local
+- Localized previously global variables (isa theme flags)
+- Replaced hardcoded demo image paths with script_path().."images/..."
+- Fixed stray newline/print formatting
+- Added .luacheckrc and CI step to run luacheck and lua tests
+- Added tests/run-lua-tests.sh to stub pandoc/debug and load filters
+
+Notes: run tests/run-lua-tests.sh locally or rely on CI.
+
+Co-authored-by: Copilot App <223556219+Copilot@users.noreply.github.com>

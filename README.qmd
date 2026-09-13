@@ -1,0 +1,22 @@
+---
+title: "Temple University Quarto Brand Extension"
+format:
+  gfm:
+    output-file: README_ecosystem.md
+---
+
+<!-- This renders to README_ecosystem.md, NOT README.md -- README.md already
+     exists as this repo's hand-written primary README (installation/usage).
+     Don't change output-file to README.md, it will silently clobber that. -->
+
+# quarto_temple_brand
+
+**Status:** Public. **License:** dual `GPL-3 | MIT` for code/config (via `LICENSE-MIT`/`LICENSE-GPL-3` — no `DESCRIPTION` to hold a license field, since this is a Quarto extension, not an R package). The Temple name/logo are **not** covered by that license — see `README.md`'s License section.
+
+## Ecosystem position
+
+Part of Temple CBE's public layer, alongside `TempleCBE`, `pslongSim`, `omop-duck-db`, and `ML-PScore`. Consumed by `kyle_out_zip` (privately) and any Quarto project wanting Temple's brand config.
+
+## Where it's heading
+
+See `NOTES.md`. The `TempleCBE` scope boundary is settled: this repo owns what Quarto reads (brand, logo, `temple-*` formats, title page); `TempleCBE` owns the R side (brand palette and ggplot2 scales, `use_temple_brand()`, report scaffolding and rendering).

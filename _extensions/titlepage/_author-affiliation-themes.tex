@@ -23,12 +23,12 @@ $if(titlepage-theme.author-color)$\textcolor{$titlepage-theme.author-color$}$end
 $endif$
 $if(titlepage-style-code.author.superscript)$
 \newcommand{\titlepageauthorblock}{
-$if(titlepage-theme.author-color)$\textcolor{$titlepage-theme.author-color$}$endif${\authorstyle{$for(by-author)$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep${\textsuperscript{,}}$endfor$$if(by-author.email)$$if(by-author.affiliations)$\textsuperscript{,}$endif${\textsuperscript{*}}$endif$$sep$$titlepage-theme.author-sep$  $if(titlepage-theme.author-space-between)$~\\ \vspace{$titlepage-theme.author-space-between$}$endif$$endfor$}}
+$if(titlepage-theme.author-color)$\textcolor{$titlepage-theme.author-color$}$endif${\authorstyle{$for(by-author)$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep${\textsuperscript{,}}$endfor$$sep$$titlepage-theme.author-sep$  $if(titlepage-theme.author-space-between)$~\\ \vspace{$titlepage-theme.author-space-between$}$endif$$endfor$}}
 }
 $endif$
 $if(titlepage-style-code.author.superscript-with-and)$
 \newcommand{\titlepageauthorblock}{
-$if(titlepage-theme.author-color)$\textcolor{$titlepage-theme.author-color$}$endif${\authorstyle{$if(by-author/allbutlast)$$for(by-author/allbutlast)$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep$\textsuperscript{,}$endfor$$if(by-author.email)$$if(by-author.affiliations)$\textsuperscript{,}$endif${\textsuperscript{*}}$endif$$sep$$titlepage-theme.author-sep$ $if(titlepage-theme.author-space-between)$~\\ \vspace{$titlepage-theme.author-space-between$}$endif$$endfor$$for(by-author/last)$ and $if(titlepage-theme.author-space-between)$~\\ \vspace{$titlepage-theme.author-space-between$}$endif$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep$\textsuperscript{,}$endfor$$if(by-author.email)$$if(by-author.affiliations)$\textsuperscript{,}$endif${\textsuperscript{*}}$endif$$endfor$$else$$for(by-author/last)$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep$\textsuperscript{,}$endfor$$if(by-author.email)$$if(by-author.affiliations)$\textsuperscript{,}$endif${\textsuperscript{*}}$endif$$endfor$$endif$}}}
+$if(titlepage-theme.author-color)$\textcolor{$titlepage-theme.author-color$}$endif${\authorstyle{$if(by-author/allbutlast)$$for(by-author/allbutlast)$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep$\textsuperscript{,}$endfor$$sep$$titlepage-theme.author-sep$ $if(titlepage-theme.author-space-between)$~\\ \vspace{$titlepage-theme.author-space-between$}$endif$$endfor$$for(by-author/last)$ and $if(titlepage-theme.author-space-between)$~\\ \vspace{$titlepage-theme.author-space-between$}$endif$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep$\textsuperscript{,}$endfor$$endfor$$else$$for(by-author/last)$\nohyphens{$by-author.name.literal$}$for(by-author.affiliations)${\textsuperscript{$it.number$}}$sep$\textsuperscript{,}$endfor$$endfor$$endif$}}}
 $endif$
 $if(titlepage-style-code.author.author-address)$
 \newcommand{\titlepageauthorblock}{
@@ -75,6 +75,7 @@ $endfor$
 }}
 $endif$
 $if(titlepage-style-code.affiliation.numbered-list-with-correspondence)$
+\newif\iftitlepagecorrespondence
 \newcommand{\titlepageaffiliationblock}{
 \hangindent=1em
 \hangafter=1
@@ -84,12 +85,18 @@ $sep$\par\hangindent=1em\hangafter=1$if(titlepage-theme.affiliation-space-betwee
 \vspace{$titlepage-theme.affiliation-space-between$}$endif$
 $endfor$
 
-\vspace{1\baselineskip} 
 $if(author)$
-$for(by-author)$
-$if(by-author.email)$
-* \textit{Correspondence:}~$by-author.name.literal$~$by-author.email$
-$endif$$endfor$$endif$
+$for(by-author)$$if(by-author.email)$\titlepagecorrespondencetrue$endif$$endfor$
+\iftitlepagecorrespondence
+\par\vspace{1\baselineskip}\hangindent=0pt
+{\bfseries\underline{Correspondence:}}
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+$for(by-author)$$if(by-author.email)$
+\item \href{mailto:$by-author.email$}{\nolinkurl{$by-author.email$}}$if(by-author.orcid)$~|~\href{https://orcid.org/$by-author.orcid$}{$by-author.orcid$}$endif$
+$endif$$endfor$
+\end{itemize}
+\fi
+$endif$
 }}
 }
 $endif$

@@ -60,20 +60,31 @@ contributes:
       number-sections: true
       toc: true
       toc-depth: 3
+      date-format: "MMM D, YYYY"
+      # Links are conventional blue, not cherry: the Temple brand guide says
+      # nothing about link color, and red links read as errors in print.
       colorlinks: true
-      linkcolor: "templecherry"
-      urlcolor: "templecherry"
+      linkcolor: "templelinkblue"
+      filecolor: "templelinkblue"
+      citecolor: "templelinkblue"
+      urlcolor: "templelinkblue"
       include-in-header:
         text: |
           \definecolor{templecherry}{HTML}{a41e35}
           \definecolor{templeNightOwl}{HTML}{005a70}
           \definecolor{templeBlack}{HTML}{000000}
           \definecolor{templeBookNook}{HTML}{fff2e8}
+          \definecolor{templelinkblue}{HTML}{0563c1}
+          % CBE address at left, Temple T at right, bottoms aligned.
+          \newcommand{\templefooterlogo}{%
+            \noindent\begin{minipage}[b]{0.72\linewidth}\footerblock\end{minipage}%
+            \hfill\begin{minipage}[b]{0.24\linewidth}\raggedleft\logoblock\end{minipage}}
 
       # bg-image theme: cherry corner with the Temple T at upper left,
-      # CBE mailing address at the bottom.
+      # CBE mailing address and Temple T at the bottom.
       titlepage: "bg-image"
       titlepage-bg-image: "temple-corner.png"
+      titlepage-logo: "Temple_T_logo.png"
       titlepage-geometry: ["top=3in", "bottom=1in", "right=1in", "left=1in"]
       titlepage-footer: |
         Center for Biostatistics & Epidemiology\
@@ -84,11 +95,13 @@ contributes:
         # Single quotes: YAML treats backslashes in them literally.
         elements:
           - '\titleblock'
+          - '\dateblock'
           - '\authorblock'
           - '\affiliationblock'
-          - '\dateblock'
           - '\vfill'
-          - '\footerblock'
+          - '\templefooterlogo'
+        logo-size: '\linewidth'
+        logo-space-after: "0pt"
         bg-image-size: '0.5\paperwidth'
         bg-image-location: "ULCorner"
         page-html-color: "ffffff"
@@ -104,7 +117,7 @@ contributes:
         title-spacing: 27
         title-fontstyle: ["bfseries"]
         title-align: left
-        title-space-after: '2\baselineskip'
+        title-space-after: '1\baselineskip'
         subtitle-style: plain
         subtitle-color: "templeBlack"
         subtitle-fontsize: 14
@@ -125,7 +138,8 @@ contributes:
         date-fontsize: 11
         date-spacing: 14
         date-fontstyle: ["textit"]
-        date-align: left
+        date-align: right
+        date-space-after: '1\baselineskip'
         footer-style: plain
         footer-fontsize: 11
         footer-spacing: 14

@@ -3,6 +3,8 @@ title: "Temple University Brand Extension Test"
 subtitle: "Center for Biostatistics & Epidemiology"
 author:
   - name: J. Kyle Armstrong
+    email: j.kyle.armstrong@temple.edu
+    corresponding: true
     affiliations:
       - name: Lewis Katz School of Medicine at Temple University
 date: today

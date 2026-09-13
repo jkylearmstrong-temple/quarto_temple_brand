@@ -70,74 +70,64 @@ contributes:
           \definecolor{templeBlack}{HTML}{000000}
           \definecolor{templeBookNook}{HTML}{fff2e8}
 
-      titlepage: "vline"
-      titlepage-logo: "Temple_T_logo.png"
-      titlepage-header: |
-        Lewis Katz School of Medicine at Temple University\
-        Department of Biomedical Education and Data Science
+      # bg-image theme: cherry corner with the Temple T at upper left,
+      # CBE mailing address at the bottom.
+      titlepage: "bg-image"
+      titlepage-bg-image: "temple-corner.png"
+      titlepage-geometry: ["top=3in", "bottom=1in", "right=1in", "left=1in"]
       titlepage-footer: |
         Center for Biostatistics & Epidemiology\
-        https://medicine.temple.edu/research/research-centers/center-biostatistics-epidemiology
+        Lewis Katz School of Medicine at Temple University\
+        3401 N. Broad Street, 3rd Floor Kresge\
+        Philadelphia, PA 19140
       titlepage-theme:
         # Single quotes: YAML treats backslashes in them literally.
         elements:
-          - '\logoblock'
-          - '\headerblock'
-          - '\vfill'
           - '\titleblock'
-          - '\vfill'
           - '\authorblock'
           - '\affiliationblock'
           - '\dateblock'
+          - '\vfill'
           - '\footerblock'
+        bg-image-size: '0.5\paperwidth'
+        bg-image-location: "ULCorner"
         page-html-color: "ffffff"
         page-text-align: left
         page-fontfamily: "Latin Modern Sans"
-        vrule-width: "6pt"
+        vrule-width: "2pt"
         vrule-color: "templecherry"
         vrule-align: left
-        vrule-space-after: "18pt"
+        vrule-space: "18pt"
         title-style: plain
         title-color: "templecherry"
-        title-fontsize: 28
-        title-spacing: 34
+        title-fontsize: 22
+        title-spacing: 27
         title-fontstyle: ["bfseries"]
         title-align: left
-        title-space-after: "0.15in"
+        title-space-after: '2\baselineskip'
         subtitle-style: plain
         subtitle-color: "templeBlack"
-        subtitle-fontsize: 16
-        subtitle-spacing: 20
+        subtitle-fontsize: 14
+        subtitle-spacing: 18
         subtitle-fontstyle: ["textit"]
         subtitle-align: left
-        subtitle-space-after: "0.1in"
-        author-style: "superscript"
+        author-style: "superscript-with-and"
         author-fontsize: 12
         author-spacing: 16
         author-align: left
-        author-space-after: "0.05in"
-        affiliation-style: "numbered-list"
-        affiliation-fontsize: 10
+        author-space-after: '2\baselineskip'
+        affiliation-style: "numbered-list-with-correspondence"
+        affiliation-fontsize: 11
         affiliation-spacing: 14
         affiliation-align: left
-        affiliation-space-after: "0.1in"
+        affiliation-space-after: '1\baselineskip'
         date-style: plain
-        date-fontsize: 10
+        date-fontsize: 11
         date-spacing: 14
         date-fontstyle: ["textit"]
         date-align: left
-        date-space-after: "0.15in"
-        header-style: plain
-        header-fontsize: 10
-        header-spacing: 14
-        header-align: left
-        header-space-after: "0.5in"
         footer-style: plain
-        footer-fontsize: 9
-        footer-spacing: 12
+        footer-fontsize: 11
+        footer-spacing: 14
         footer-align: left
-        footer-space-after: "0in"
-        # A LaTeX length: the template uses it as \includegraphics[width=...].
-        logo-size: '0.12\textwidth'
-        logo-align: left
-        logo-space-after: "0.3in"
+        footer-space-after: "1pt"

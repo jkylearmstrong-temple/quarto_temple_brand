@@ -21,7 +21,7 @@ It distributes a unified brand configuration (`brand.yml`), branding assets (suc
 - **Logo Assets:** Packages the primary Temple "T" logo.
 - **Formats:** Contributes Temple document formats:
   - **`temple-html`:** Table of contents, code tools, paged data frames, centered figures.
-  - **`temple-pdf` (LaTeX):** Temple title page—logo, cherry vertical rule, school/department header, CBE footer—built on the bundled [`nmfs-opensci/quarto_titlepages`](https://github.com/nmfs-opensci/quarto_titlepages) extension, with numbered sections, a table of contents, and cherry links.
+  - **`temple-pdf` (LaTeX):** Temple title page—cherry corner with the Temple "T" at upper left, cherry vertical rule, authors with numbered affiliations and correspondence, CBE mailing address at the bottom—built on the bundled [`nmfs-opensci/quarto_titlepages`](https://github.com/nmfs-opensci/quarto_titlepages) extension, with numbered sections, a table of contents, and cherry links.
   - **`temple-typst`:** PDF without a LaTeX installation; table of contents, numbered sections, 1in margins.
   - **`temple-revealjs`:** Fade transitions, slide numbers, CBE footer.
 

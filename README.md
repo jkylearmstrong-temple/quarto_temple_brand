@@ -34,10 +34,12 @@ Every format, including plain `html`, `typst`, and `revealjs`, also picks up the
 From the root of your Quarto project (a directory with a `_quarto.yml`; `project: {type: default}` is enough):
 
 ```bash
-quarto add jkylearmstrong/quarto_temple_brand
+quarto add jkylearmstrong-temple/quarto_temple_brand
 ```
 
-This installs two extensions side by side under `_extensions/`: `temple` (brand and formats) and `titlepage` (used by `temple-pdf`). Keep them together—`temple-pdf` finds the title page files by relative path.
+This installs two extensions side by side under `_extensions/jkylearmstrong-temple/`: `temple` (brand and formats) and `titlepage` (used by `temple-pdf`). Keep them together—`temple-pdf` finds the title page files by relative path.
+
+To pin a version, add a tag: `quarto add jkylearmstrong-temple/quarto_temple_brand@v1.1.0`.
 
 From R, [TempleCBE](https://github.com/jkylearmstrong/TempleCBE) does the same and creates `_quarto.yml` if it is missing:
 

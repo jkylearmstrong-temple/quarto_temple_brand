@@ -19,7 +19,7 @@ local function is_equal (s, val)
 end
 
 local function has_value (tab, val)
-    for index, value in ipairs(tab) do
+    for _, value in ipairs(tab) do
         if value == val then
             return true
         end
@@ -28,21 +28,8 @@ local function has_value (tab, val)
     return false
 end
 
-local function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
-
 function Meta(m)
-  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok
+  local choice, okvals, themevals, yamltext, yamlelement, ok, isatheme
 
 --[[
 This function checks that the value the user set is ok and stops with an error message if no.
@@ -50,26 +37,28 @@ yamlelement: the yaml metadata. e.g. m["titlepage-theme"]["page-align"]
 yamltext: page, how to print the yaml value in the error message. e.g. titlepage-theme: page-align
 okvals: a text table of ok styles. e.g. {"right", "center"}
 --]]
-  local function check_yaml (yamlelement, yamltext, okvals)
-    local choice = pandoc.utils.stringify(yamlelement)
-    if not has_value(okvals, choice) then
-      error("titlepage extension error: " .. yamltext .. " is set to " .. choice .. ". It must be one of: " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".")
+  local function check_yaml (element, text, allowed)
+    local value = pandoc.utils.stringify(element)
+    if not has_value(allowed, value) then
+      error("titlepage extension error: " .. text .. " is set to " .. value
+        .. ". It must be one of: " .. table.concat(allowed, ", ") .. ".")
     end
     return true
   end
 
 --[[
-This function gets the value of something like titlepage-theme.title-style and sets a value titlepage-theme.title-style.plain (for example). It also
-does error checking against okvals. "plain" is always ok and if no value is set then the style is set to plain.
+This function gets the value of something like titlepage-theme.title-style and sets a value
+titlepage-theme.title-style.plain (for example). It also does error checking against okvals.
+"plain" is always ok and if no value is set then the style is set to plain.
 page: titlepage or coverpage
 styleement: page, title, subtitle, header, footer, affiliation, etc
 okvals: a text table of ok styles. e.g. {"plain", "two-column"}
 --]]
-  local function set_style (page, styleelement, okvals)
+  local function set_style (page, styleelement, allowed)
     yamltext = page .. "-theme" .. ": " .. styleelement .. "-style"
     yamlelement = m[page .. "-theme"][styleelement .. "-style"]
     if not isEmpty(yamlelement) then
-      ok = check_yaml (yamlelement, yamltext, okvals)
+      ok = check_yaml (yamlelement, yamltext, allowed)
       if ok then
         m[page .. "-style-code"][styleelement] = {}
         m[page .. "-style-code"][styleelement][getVal(yamlelement)] = true
@@ -77,8 +66,6 @@ okvals: a text table of ok styles. e.g. {"plain", "two-column"}
         error("titlepage extension error: invalid value for " .. yamltext)
       end
     else
---      print("\n\ntitlepage extension error: " .. yamltext .. " needs a value. Should have been set in titlepage-theme lua filter.\n\n")
---      error()
         m[page .. "-style-code"][styleelement] = {}
         m[page .. "-style-code"][styleelement]["plain"] = true
     end
@@ -98,12 +85,12 @@ This function assigns the themevals to the meta data
   end
 
   local titlepage_table = {
-    ["academic"] = function (m)
+    ["academic"] = function ()
       themevals = {
         ["elements"] = {
           pandoc.MetaInlines{pandoc.RawInline("latex","\\headerblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\logoblock")},
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\dateblock")}
@@ -123,10 +110,10 @@ This function assigns the themevals to the meta data
         ["date-fontstyle"] = {"large"}
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["bg-image"] = function (m)
+    ["bg-image"] = function ()
       if isEmpty(m['titlepage-bg-image']) then
         m['titlepage-bg-image'] = "corner-bg.png"
       end
@@ -135,7 +122,7 @@ This function assigns the themevals to the meta data
       end
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\affiliationblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
@@ -167,13 +154,13 @@ This function assigns the themevals to the meta data
         ["bg-image-location"] = "ULCorner",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["classic-lined"] = function (m)
+    ["classic-lined"] = function ()
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\logoblock")},
@@ -203,13 +190,13 @@ This function assigns the themevals to the meta data
         ["logo-space-after"] = "1cm",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["colorbox"] = function (m)
+    ["colorbox"] = function ()
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")}
           },
@@ -232,16 +219,17 @@ This function assigns the themevals to the meta data
         ["title-colorbox-bordercolor"] = "black",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["formal"] = function (m)
+    ["formal"] = function ()
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
-          pandoc.MetaInlines{pandoc.RawInline("latex","A report presented at the annual\\\\meeting on 10 August 2025\\\\ \\vspace{0.8cm}")},
+          pandoc.MetaInlines{pandoc.RawInline("latex",
+            "A report presented at the annual\\\\meeting on 10 August 2025\\\\ \\vspace{0.8cm}")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\logoblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\footerblock")}
           },
@@ -267,13 +255,13 @@ This function assigns the themevals to the meta data
         ["logo-space-after"] = "1cm",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["vline"] = function (m)
+    ["vline"] = function ()
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\affiliationblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
@@ -305,13 +293,13 @@ This function assigns the themevals to the meta data
         ["vrule-color"] = "black",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["vline-text"] = function (m)
+    ["vline-text"] = function ()
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\affiliationblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
@@ -346,14 +334,14 @@ This function assigns the themevals to the meta data
         ["vrule-text"] = "Add your text in vrule-text"
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["plain"] = function (m)
+    ["plain"] = function ()
       themevals = {
         ["elements"] = {
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\headerblock")}, 
-          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")}, 
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\headerblock")},
+          pandoc.MetaInlines{pandoc.RawInline("latex","\\titleblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\authorblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\affiliationblock")},
           pandoc.MetaInlines{pandoc.RawInline("latex","\\vfill")},
@@ -384,27 +372,28 @@ This function assigns the themevals to the meta data
           pandoc.RawInline("latex","1\\baselineskip")},
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["none"] = function (m) return m end
+    ["none"] = function () return m end
   }
-  
+
   m['titlepage-file'] = false
   if isEmpty(m.titlepage) then m['titlepage'] = "plain" end
   if getVal(m.titlepage) == "false" then m['titlepage'] = "none" end
   if getVal(m.titlepage) == "true" then m['titlepage'] = "plain" end
-  if getVal(m.titlepage) == "none" then 
+  if getVal(m.titlepage) == "none" then
     m['titlepage-true'] = false
   else
-    m['titlepage-true'] = true 
+    m['titlepage-true'] = true
   end
   choice = pandoc.utils.stringify(m.titlepage)
   okvals = {"plain", "vline", "vline-text", "bg-image", "colorbox", "academic", "formal", "classic-lined"}
   isatheme = has_value (okvals, choice)
   if not isatheme and choice ~= "none" then
     if not file_exists(choice) then
-      error("titlepage extension error: titlepage can be a tex file or one of the themes: " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".")
+      error("titlepage extension error: titlepage can be a tex file or one of the themes: "
+        .. table.concat(okvals, ", ") .. ".")
     else
       m['titlepage-file'] = true
       m['titlepage-filename'] = choice
@@ -412,13 +401,14 @@ This function assigns the themevals to the meta data
     end
   end
   if m['titlepage-file'] and not isEmpty(m['titlepage-theme']) then
-    print("\n\ntitlepage extension message: since you passed in a static titlepage file, titlepage-theme is ignored.n\n")
+    print("\n\ntitlepage extension message: "
+      .. "since you passed in a static titlepage file, titlepage-theme is ignored.\n\n")
   end
   if not m['titlepage-file'] and choice ~= "none" then
     if isEmpty(m['titlepage-theme']) then
       m['titlepage-theme'] = {}
     end
-    titlepage_table[choice](m) -- add the theme defaults
+    titlepage_table[choice]() -- add the theme defaults
   end
 
 -- Only for themes
@@ -438,7 +428,8 @@ Error checking and setting the style codes
   set_style("titlepage", "author", okvals)
   okvals = {"none", "numbered-list", "numbered-list-with-correspondence"}
   set_style("titlepage", "affiliation", okvals)
-  if is_equal(m['titlepage-theme']["author-style"], "author-address") and is_equal(m['titlepage-theme']["author-align"], "spread") then
+  if is_equal(m['titlepage-theme']["author-style"], "author-address")
+    and is_equal(m['titlepage-theme']["author-align"], "spread") then
     error("\n\nquarto_titlepages error: If author-style is two-column, then author-align cannot be spread.\n\n")
   end
 
@@ -446,14 +437,14 @@ Error checking and setting the style codes
 Set the fontsize defaults
 if page-fontsize was passed in or if fontsize passed in but not spacing
 --]]
-  for key, val in pairs({"title", "author", "affiliation", "footer", "header", "date"}) do
+  for _, val in pairs({"title", "author", "affiliation", "footer", "header", "date"}) do
     if isEmpty(m["titlepage-theme"][val .. "-fontsize"]) then
       if not isEmpty(m["titlepage-theme"]["page-fontsize"]) then
         m["titlepage-theme"][val .. "-fontsize"] = getVal(m["titlepage-theme"]["page-fontsize"])
       end
     end
   end
-  for key, val in pairs({"page", "title", "subtitle", "author", "affiliation", "footer", "header", "date"}) do
+  for _, val in pairs({"page", "title", "subtitle", "author", "affiliation", "footer", "header", "date"}) do
     if not isEmpty(m['titlepage-theme'][val .. "-fontsize"]) then
       if isEmpty(m['titlepage-theme'][val .. "-spacing"]) then
         m['titlepage-theme'][val .. "-spacing"] = 1.2*getVal(m['titlepage-theme'][val .. "-fontsize"])
@@ -484,7 +475,7 @@ Set affiliation sep character
     m['titlepage-theme']["affiliation-sep"] = pandoc.MetaInlines{
           pandoc.RawInline("latex","\\\\")}
   end
-  
+
 --[[
 Set vrule defaults
 --]]
@@ -509,11 +500,11 @@ Set vrule defaults
 --[[
 Set the defaults for the titlepage alignments
 default titlepage alignment is left
---]]    
+--]]
   if isEmpty(m['titlepage-theme']["page-align"]) then
     m['titlepage-theme']["page-align"] = "left"
   end
-  for key, val in pairs({"page", "title", "author", "affiliation", "footer", "header", "logo", "date"}) do
+  for _, val in pairs({"page", "title", "author", "affiliation", "footer", "header", "logo", "date"}) do
     if not isEmpty(m["titlepage-theme"][val .. "-align"]) then
       okvals = {"right", "left", "center"}
       if has_value({"title", "author", "footer", "header"}, val) then table.insert(okvals, "spread") end
@@ -521,7 +512,7 @@ default titlepage alignment is left
       if not ok then error("") end
     end
   end
-  
+
 --[[
 Set bg-image defaults
 --]]
@@ -534,7 +525,7 @@ Set bg-image defaults
       okvals = {"ULCorner", "URCorner", "LLCorner", "LRCorner", "TileSquare", "Center"}
       ok = check_yaml (m["titlepage-theme"]["bg-image-location"], "titlepage-theme: bg-image-location", okvals)
       if not ok then error("") end
-    end  
+    end
   end
 
 --[[
@@ -546,11 +537,11 @@ Set logo defaults
           pandoc.RawInline("latex","0.2\\paperwidth")}
     end
   end
-  
+
 end -- end the theme section
 
   return m
-  
+
 end
 
 

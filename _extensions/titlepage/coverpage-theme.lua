@@ -11,13 +11,16 @@ local function getVal(s)
   return pandoc.utils.stringify(s)
 end
 
-function script_path()
-   local str = debug.getinfo(2, "S").source:sub(2)
-   return str:match("(.*/)")
+local function script_path()
+  local source = debug.getinfo(2, "S").source
+  if source:sub(1,1) == "@" then source = source:sub(2) end
+  local dir = source:match("^(.*[\\/])")
+  if dir then return dir end
+  return "./"
 end
 
 local function has_value (tab, val)
-    for index, value in ipairs(tab) do
+    for _, value in ipairs(tab) do
         if value == val then
             return true
         end
@@ -26,26 +29,8 @@ local function has_value (tab, val)
     return false
 end
 
-local function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
-
-local function table_concat(t1,t2)
-  for _,v in ipairs(t2) do table.insert(t1, v) end
-  return t1
-end
-
 function Meta(m)
-  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok
+  local choice, okvals, themevals, demovals, image_table, bottom_table, yamltext, yamlelement, ok, isatheme
 
 --[[
 This function checks that the value the user set is ok and stops with an error message if no.
@@ -53,31 +38,33 @@ yamlelement: the yaml metadata. e.g. m["coverpage-theme"]["page-align"]
 yamltext: page, how to print the yaml value in the error message. e.g. coverpage-theme: page-align
 okvals: a text table of ok styles. e.g. {"right", "center"}
 --]]
-  local function check_yaml (yamlelement, yamltext, okvals)
-    local choice = pandoc.utils.stringify(yamlelement)
-    if not has_value(okvals, choice) then
-      error("titlepage extension error: " .. yamltext .. " is set to " .. choice .. ". It must be one of: " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".")
+  local function check_yaml (element, text, allowed)
+    local value = pandoc.utils.stringify(element)
+    if not has_value(allowed, value) then
+      error("titlepage extension error: " .. text .. " is set to " .. value
+        .. ". It must be one of: " .. table.concat(allowed, ", ") .. ".")
     end
     return true
   end
 
 --[[
-This function gets the value of something like coverpage-theme.title-style and sets a value coverpage-theme.title-style.plain (for example). It also
-does error checking against okvals. "plain" is always ok and if no value is set then the style is set to plain.
+This function gets the value of something like coverpage-theme.title-style and sets a value
+coverpage-theme.title-style.plain (for example). It also does error checking against okvals.
+"plain" is always ok and if no value is set then the style is set to plain.
 page: titlepage or coverpage
 styleelement: page, title, subtitle, header, footer, affiliation, date, etc
 okvals: a text table of ok styles. e.g. {"plain", "two-column"}
 --]]
-  local function set_style (page, styleelement, okvals)
+  local function set_style (page, styleelement, allowed)
     yamltext = page .. "-theme" .. ": " .. styleelement .. "-style"
     yamlelement = m[page .. "-theme"][styleelement .. "-style"]
     if not isEmpty(yamlelement) then
-      ok = check_yaml (yamlelement, yamltext, okvals)
+      ok = check_yaml (yamlelement, yamltext, allowed)
       if ok then
         m[page .. "-style-code"][styleelement] = {}
         m[page .. "-style-code"][styleelement][getVal(yamlelement)] = true
       else
-        error()
+        error("titlepage extension error: invalid value for " .. yamltext)
       end
     else
         m[page .. "-style-code"][styleelement] = {}
@@ -99,7 +86,7 @@ This function assigns the themevals to the meta data
   end
 
   local coverpage_table = {
-    ["title"] = function (m)
+    ["title"] = function ()
       themevals = {
         ["page-align"] = "left",
         ["title-style"] = "plain",
@@ -109,10 +96,10 @@ This function assigns the themevals to the meta data
         ["date-style"] = "none",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["author"] = function (m)
+    ["author"] = function ()
       themevals = {
         ["page-align"] = "left",
         ["title-style"] = "none",
@@ -122,10 +109,10 @@ This function assigns the themevals to the meta data
         ["date-style"] = "none",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["titleauthor"] = function (m)
+    ["titleauthor"] = function ()
       themevals = {
         ["page-align"] = "left",
         ["title-style"] = "plain",
@@ -135,18 +122,18 @@ This function assigns the themevals to the meta data
         ["date-style"] = "none",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["true"] = function (m)
+    ["true"] = function ()
       themevals = {
         ["page-align"] = "left"
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["great-wave"] = function (m)
+    ["great-wave"] = function ()
       themevals = {
         ["page-align"] = "right",
         ["title-style"] = "plain",
@@ -156,10 +143,10 @@ This function assigns the themevals to the meta data
         ["date-style"] = "none",
         }
       assign_value(themevals)
-        
+
       return m
     end,
-    ["otter"] = function (m)
+    ["otter"] = function ()
       themevals = {
         ["page-align"] = "left",
         ["title-style"] = "plain",
@@ -169,11 +156,11 @@ This function assigns the themevals to the meta data
         ["date-style"] = "none",
         }
       assign_value(themevals)
-        
+
       return m
     end,
   }
-  
+
   m['coverpage-file'] = false
   if m.coverpage then
     choice = pandoc.utils.stringify(m.coverpage)
@@ -181,7 +168,8 @@ This function assigns the themevals to the meta data
     isatheme = has_value (okvals, choice)
     if not isatheme then
       if not file_exists(choice) then
-        error("titlepage extension error: coverpage can be a tex file or one of the themes: " .. pandoc.utils.stringify(table.concat(okvals, ", ")) .. ".")
+        error("titlepage extension error: coverpage can be a tex file or one of the themes: "
+          .. table.concat(okvals, ", ") .. ".")
       else
         m['coverpage-file'] = true
         m['coverpage-filename'] = choice
@@ -196,12 +184,13 @@ This function assigns the themevals to the meta data
       if isEmpty(m['coverpage-theme']) then
         m['coverpage-theme'] = {}
       end
-      coverpage_table[choice](m) -- add the theme defaults
+      coverpage_table[choice]() -- add the theme defaults
     end
     if m['coverpage-file'] then
       m["coverpage-true"] = true
       if not isEmpty(m['coverpage-theme']) then
-        print("\n\ntitlepage extension message: since you passed in a static coverpage file, coverpage-theme is ignored.n\n")
+        print("\n\ntitlepage extension message: "
+          .. "since you passed in a static coverpage file, coverpage-theme is ignored.\n\n")
       end
     end
     if choice == "none" then
@@ -215,7 +204,7 @@ This function assigns the themevals to the meta data
 -- Only for themes
 -- coverpage-theme will exist if using a theme
 if not m['coverpage-file'] and m['coverpage-true'] then
-  
+
 --[[
 Set up the demos
 --]]
@@ -223,7 +212,7 @@ Set up the demos
   if choice == "great-wave" then
     if isEmpty(m['coverpage-bg-image']) then
 --      m['coverpage-bg-image'] = script_path().."images/TheGreatWaveoffKanagawa.jpeg"
-      m['coverpage-bg-image'] = "img/TheGreatWaveoffKanagawa.jpeg"
+      m['coverpage-bg-image'] = script_path().."images/TheGreatWaveoffKanagawa.jpeg"
     end
     if isEmpty(m['coverpage-title']) then
       m['coverpage-title'] = "quarto_titlepages"
@@ -231,7 +220,19 @@ Set up the demos
     if isEmpty(m['coverpage-footer']) then
       m['coverpage-footer'] = "Templates for title pages and covers"
     end
-    demovals = {["title-align"] = "right", ["title-fontsize"] = 40, ["title-fontfamily"] = "QTDublinIrish.otf", ["title-bottom"] = "10in", ["author-style"] = "none", ["footer-fontsize"] = 20, ["footer-fontfamily"] = "QTDublinIrish.otf", ["footer-align"] = "right", ["footer-bottom"] = "9.5in", ["page-html-color"] = "F6D5A8", ["bg-image-fading"] = "north"}
+    demovals = {
+      ["title-align"] = "right",
+      ["title-fontsize"] = 40,
+      ["title-fontfamily"] = "QTDublinIrish.otf",
+      ["title-bottom"] = "10in",
+      ["author-style"] = "none",
+      ["footer-fontsize"] = 20,
+      ["footer-fontfamily"] = "QTDublinIrish.otf",
+      ["footer-align"] = "right",
+      ["footer-bottom"] = "9.5in",
+      ["page-html-color"] = "F6D5A8",
+      ["bg-image-fading"] = "north",
+    }
     for dkey, val in pairs(demovals) do
       if isEmpty(m['coverpage-theme'][dkey]) then
         m['coverpage-theme'][dkey] = val
@@ -241,7 +242,7 @@ Set up the demos
   if choice == "otter" then
     if isEmpty(m['coverpage-bg-image']) then
 --      m['coverpage-bg-image'] = script_path().."images/otter-bar.jpeg"
-        m['coverpage-bg-image'] = "img/otter-bar.jpeg"
+        m['coverpage-bg-image'] = script_path().."images/otter-bar.jpeg"
     end
     if isEmpty(m['coverpage-title']) then
       m['coverpage-title'] = "Otters"
@@ -249,7 +250,16 @@ Set up the demos
     if isEmpty(m['coverpage-author']) then
       m['coverpage-author'] = {"EE", "Holmes"}
     end
-    demovals = {["title-color"] = "white", ["title-fontfamily"] = "QTDublinIrish.otf", ["title-fontsize"] = 100, ["author-fontstyle"] = {"textsc"}, ["author-sep"] = "newline", ["author-align"] = "right", ["author-fontsize"] = 30, ["author-bottom"] = "2in"}
+    demovals = {
+      ["title-color"] = "white",
+      ["title-fontfamily"] = "QTDublinIrish.otf",
+      ["title-fontsize"] = 100,
+      ["author-fontstyle"] = {"textsc"},
+      ["author-sep"] = "newline",
+      ["author-align"] = "right",
+      ["author-fontsize"] = 30,
+      ["author-bottom"] = "2in",
+    }
     for dkey, val in pairs(demovals) do
       if isEmpty(m['coverpage-theme'][dkey]) then
         m['coverpage-theme'][dkey] = val
@@ -258,7 +268,7 @@ Set up the demos
   end
 
 -- set the coverpage values unless user passed them in as coverpage-key
-  for key, val in pairs({"title", "author", "date"}) do
+  for _, val in pairs({"title", "author", "date"}) do
     if isEmpty(m['coverpage-' .. val]) then
       if not isEmpty(m[val]) then
         m['coverpage-' .. val] = m[val]
@@ -268,13 +278,13 @@ Set up the demos
 -- make a bit more robust to whatever user passes in for coverpage-author
   if not isEmpty(m['coverpage-author']) then
     for key, val in pairs(m['coverpage-author']) do
-      m['coverpage-author'][key] = getVal(m['coverpage-author'][key])
+      m['coverpage-author'][key] = getVal(val)
     end
   end
 
 -- fix "true" to figure out what was passed in
   if choice == "true" then
-    for key, val in pairs({"title", "author", "footer", "header", "date"}) do
+    for _, val in pairs({"title", "author", "footer", "header", "date"}) do
       if not isEmpty(m['coverpage-' .. val]) then
         if isEmpty(m['coverpage-theme'][val .. "-style"]) then
           m['coverpage-theme'][val .. "-style"] = "plain"
@@ -285,7 +295,7 @@ Set up the demos
     end
   end
 
-  
+
 --[[
 Error checking and setting the style codes
 --]]
@@ -320,16 +330,19 @@ Error checking and setting the style codes
       okvals = {"top", "bottom", "left", "right", "north", "south", "east", "west", "fadeout" }
       ok = check_yaml (m["coverpage-theme"]["bg-image-fading"], "coverpage-theme: bg-image-fading", okvals)
       if not ok then error("") end
-      if getVal(m['coverpage-theme']['bg-image-fading']) == "left" then m['coverpage-theme']['bg-image-fading'] = "west" end
-      if getVal(m['coverpage-theme']['bg-image-fading']) == "right" then m['coverpage-theme']['bg-image-fading'] = "east" end
-      if getVal(m['coverpage-theme']['bg-image-fading']) == "top" then m['coverpage-theme']['bg-image-fading'] = "north" end
-      if getVal(m['coverpage-theme']['bg-image-fading']) == "bottom" then m['coverpage-theme']['bg-image-fading'] = "south" end
+      local fading_alias = {left = "west", right = "east", top = "north", bottom = "south"}
+      local fading = getVal(m['coverpage-theme']['bg-image-fading'])
+      if fading_alias[fading] then
+        m['coverpage-theme']['bg-image-fading'] = fading_alias[fading]
+      end
     end
   end -- bg-image attributes
   if m['coverpage-bg-image'] then -- not false
     choice = pandoc.utils.stringify(m['coverpage-bg-image'])
     if not file_exists(choice) then
-      error("\n\ntitlepage extension error: coverpage-bg-image file " .. choice .. " cannot be opened. Is the file path and name correct? Using a demo? Demo options are great-wave and otter.\n\n")
+      error("\n\ntitlepage extension error: coverpage-bg-image file " .. choice
+        .. " cannot be opened. Is the file path and name correct? "
+        .. "Using a demo? Demo options are great-wave and otter.\n\n")
     end
   end
 
@@ -339,7 +352,7 @@ if page-fontsize was passed in or if fontsize passed in but not spacing
 --]]
 
   -- if not passed in then it will take page-fontsize and page-spacing
-  for key, val in pairs({"title", "author", "footer", "header", "date"}) do
+  for _, val in pairs({"title", "author", "footer", "header", "date"}) do
     if getVal(m["coverpage-theme"][val .. "-style"]) ~= "none" then
       if not isEmpty(m["coverpage-theme"]["page-fontsize"]) then
         if isEmpty(m["coverpage-theme"][val .. "-fontsize"]) then
@@ -349,7 +362,7 @@ if page-fontsize was passed in or if fontsize passed in but not spacing
     end
   end
   -- make sure spacing is set if user passed in fontsize
-  for key, val in pairs({"page", "title", "author", "footer", "header", "date"}) do
+  for _, val in pairs({"page", "title", "author", "footer", "header", "date"}) do
     if not isEmpty(m['coverpage-theme'][val .. "-fontsize"]) then
       if isEmpty(m['coverpage-theme'][val .. "-spacing"]) then
         m['coverpage-theme'][val .. "-spacing"] = 1.2*getVal(m['coverpage-theme'][val .. "-fontsize"])
@@ -385,11 +398,11 @@ Set affiliation sep character
 Set the defaults for the coverpage alignments
 default coverpage alignment is left
 because coverpage uses tikzpicture, the alignments of the elements must be set
---]]    
+--]]
   if isEmpty(m['coverpage-theme']["page-align"]) then
     m['coverpage-theme']["page-align"] = "left"
   end
-  for key, val in pairs({"page", "title", "author", "footer", "header", "logo", "date"}) do
+  for _, val in pairs({"page", "title", "author", "footer", "header", "logo", "date"}) do
     if not isEmpty(m["coverpage-theme"][val .. "-align"]) then
       okvals = {"right", "left", "center"}
       if has_value({"title", "author", "footer", "header", "date"}, val) then table.insert(okvals, "spread") end
@@ -403,7 +416,7 @@ because coverpage uses tikzpicture, the alignments of the elements must be set
 --[[
 Set left and width alignments, bottom distance and rotation
 --]]
-  for key, val in pairs({"title", "author", "footer", "header", "date"}) do
+  for _, val in pairs({"title", "author", "footer", "header", "date"}) do
     if m['coverpage-theme'][val .. "-style"] ~= "none" then
       if getVal(m['coverpage-theme'][val .. "-align"]) == "left" then
         m['coverpage-theme'][val .. "-anchor"] = "north west" -- not user controlled
@@ -416,7 +429,8 @@ Set left and width alignments, bottom distance and rotation
           end
         else
           if isEmpty(m['coverpage-theme'][val .. '-width']) then
-            error("titlepage extension error: if you specify coverpage-theme "..val.."-left, you must also specify "..val.."-width.")
+            error("titlepage extension error: if you specify coverpage-theme " .. val
+              .. "-left, you must also specify " .. val .. "-width.")
           end
         end
       end -- left
@@ -431,7 +445,8 @@ Set left and width alignments, bottom distance and rotation
           end
         else
           if isEmpty(m['coverpage-theme'][val .. '-width']) then
-            error("titlepage extension error: if you specify coverpage-theme "..val.."-left, you must also specify "..val.."-width.")
+            error("titlepage extension error: if you specify coverpage-theme " .. val
+              .. "-left, you must also specify " .. val .. "-width.")
           end
         end
       end -- right
@@ -446,7 +461,8 @@ Set left and width alignments, bottom distance and rotation
           end
         else
           if isEmpty(m['coverpage-theme'][val .. '-width']) then
-            error("titlepage extension error: if you specify coverpage-theme "..val.."-left, you must also specify "..val.."-width.")
+            error("titlepage extension error: if you specify coverpage-theme " .. val
+              .. "-left, you must also specify " .. val .. "-width.")
           end
         end
       end -- center
@@ -468,7 +484,7 @@ Set left and width alignments, bottom distance and rotation
       end -- rotate
     end -- if style not none
   end -- for loop
-  
+
 
 --[[
 Set logo defaults
@@ -479,11 +495,11 @@ Set logo defaults
           pandoc.RawInline("latex","0.2\\paperwidth")}
     end
   end
-  
+
 end -- end the theme section
 
   return m
-  
+
 end
 
 

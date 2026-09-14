@@ -7,6 +7,9 @@ All notable changes to the Temple University Quarto Brand Extension will be docu
 ### Added
 - **`titlepage-corresponding-only`.** Set `titlepage-corresponding-only: true` in a document's metadata to list only authors marked `corresponding: true` under the `temple-pdf` title page's Correspondence heading. Without it, every author with an email is listed, as before.
 
+### Fixed
+- **`temple-pdf` failed when a document set its own `include-in-header`.** The Temple colours (`templecherry`, `templeNightOwl`, `templeBlack`, `templeBookNook`, `templelinkblue`) and `\templefooterlogo` were defined only in the format's `include-in-header`, which a document's own `include-in-header` replaces, so LaTeX stopped with "Undefined color". They are now defined in the title page's `pandoc.tex` partial with `\providecolor` and `\providecommand`, after the document's header, so a document's own definitions still take precedence.
+
 ## [1.1.0] - 2026-09-13
 
 ### Added

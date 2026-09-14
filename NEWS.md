@@ -2,10 +2,14 @@
 
 All notable changes to the Temple University Quarto Brand Extension will be documented in this file.
 
-## Unreleased
+## [Unreleased]
 
 ### Added
 - **`titlepage-corresponding-only`.** Set `titlepage-corresponding-only: true` in a document's metadata to list only authors marked `corresponding: true` under the `temple-pdf` title page's Correspondence heading. Without it, every author with an email is listed, as before.
+- **`titlepage-corner`.** Set `titlepage-corner: false` to drop the cherry corner graphic from the `temple-pdf` title page; the title then starts 1in from the top instead of 3in. The corner stays on by default.
+
+### Changed
+- **Oxford comma in title page author lists.** With three or more authors, `temple-pdf` now prints "A, B, and C" instead of "A, B and C". Two authors still read "A and B".
 
 ## [1.1.0] - 2026-09-13
 

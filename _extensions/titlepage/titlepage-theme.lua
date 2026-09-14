@@ -411,6 +411,18 @@ This function assigns the themevals to the meta data
     titlepage_table[choice]() -- add the theme defaults
   end
 
+  -- titlepage-corner: false drops the upper-left background image and
+  -- gives back the 3in top margin reserved for it (default true)
+  local corner = m['titlepage-corner']
+  if corner == false or (corner ~= nil and getVal(corner) == "false") then
+    m['titlepage-bg-image'] = false
+    if not isEmpty(m['titlepage-geometry']) then
+      for i, val in ipairs(m['titlepage-geometry']) do
+        if getVal(val) == "top=3in" then m['titlepage-geometry'][i] = "top=1in" end
+      end
+    end
+  end
+
 -- Only for themes
 -- titlepage-theme will exist if using a theme
 if not m['titlepage-file'] and m['titlepage-true'] then

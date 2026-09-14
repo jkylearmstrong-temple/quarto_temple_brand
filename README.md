@@ -48,6 +48,39 @@ TempleCBE::use_temple_brand("analysis")
 TempleCBE::create_report("analysis", template_name = "temple")
 ```
 
+### Using `quarto_titlepages` Across Subfolders (No Duplication)
+
+If your project has multiple report subfolders, run `quarto add nmfs-opensci/quarto_titlepages` **once** from the project root (the folder containing `_quarto.yml`). This creates one shared `_extensions/nmfs-opensci/quarto_titlepages` directory that every subfolder can use.
+
+```mermaid
+flowchart TD
+    A["Project Root<br/>_quarto.yml"] --> B["Install Extension Once<br/>quarto add nmfs-opensci/quarto_titlepages"]
+    B --> C["_extensions/<br/>nmfs-opensci/quarto_titlepages"]
+
+    C --> D["Subfolder: report1/<br/>report1.qmd"]
+    C --> E["Subfolder: report2/<br/>report2.qmd"]
+    C --> F["Subfolder: report3/<br/>report3.qmd"]
+
+    D --> G["Render report1<br/>quarto render report1.qmd"]
+    E --> H["Render report2<br/>quarto render report2.qmd"]
+    F --> I["Render report3<br/>quarto render report3.qmd"]
+
+    subgraph BAD_PRACTICE
+        X1["Subfolder"] --> X2["Run quarto use template<br/>❌ Copies template files again"]
+        X2 --> X3["Duplicate _extensions<br/>Duplicate assets<br/>Version drift"]
+    end
+
+    subgraph GOOD_PRACTICE
+        Y1["Single Project Root"] --> Y2["Run quarto add once"]
+        Y2 --> Y3["Shared _extensions for all subfolders"]
+        Y3 --> Y4["Consistent rendering<br/>No duplication"]
+    end
+
+    BAD_PRACTICE -. avoid .-> GOOD_PRACTICE
+```
+
+Avoid running `quarto use template` separately inside each report subfolder, which can duplicate assets and create version drift.
+
 ---
 
 ## Usage

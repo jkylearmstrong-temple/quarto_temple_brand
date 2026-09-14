@@ -11,6 +11,20 @@ $for(header-includes)$
 $header-includes$
 $endfor$
 
+% Temple colours and footer macro used by temple-pdf. They live in this
+% partial, not the format's include-in-header, because a document's own
+% include-in-header replaces that block. \providecolor and \providecommand
+% sit after header-includes, so a document that defines any of them wins.
+\providecolor{templecherry}{HTML}{a41e35}
+\providecolor{templeNightOwl}{HTML}{005a70}
+\providecolor{templeBlack}{HTML}{000000}
+\providecolor{templeBookNook}{HTML}{fff2e8}
+\providecolor{templelinkblue}{HTML}{0563c1}
+% CBE address at left, Temple T at right, bottoms aligned.
+\providecommand{\templefooterlogo}{%
+  \noindent\begin{minipage}[b]{0.72\linewidth}\footerblock\end{minipage}%
+  \hfill\begin{minipage}[b]{0.24\linewidth}\raggedleft\logoblock\end{minipage}}
+
 \usepackage{hyphenat}
 \usepackage{ifthen}
 \usepackage{calc}

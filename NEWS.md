@@ -11,6 +11,9 @@ All notable changes to the Temple University Quarto Brand Extension will be docu
 ### Changed
 - **Oxford comma in title page author lists.** With three or more authors, `temple-pdf` now prints "A, B, and C" instead of "A, B and C". Two authors still read "A and B".
 
+### Fixed
+- **`temple-pdf` failed when a document set its own `include-in-header`.** The Temple colours (`templecherry`, `templeNightOwl`, `templeBlack`, `templeBookNook`, `templelinkblue`) and `\templefooterlogo` were defined only in the format's `include-in-header`, which a document's own `include-in-header` replaces, so LaTeX stopped with "Undefined color". They are now defined in the title page's `pandoc.tex` partial with `\providecolor` and `\providecommand`, after the document's header, so a document's own definitions still take precedence.
+
 ## [1.1.0] - 2026-09-13
 
 ### Added

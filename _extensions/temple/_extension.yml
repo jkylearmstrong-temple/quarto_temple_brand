@@ -68,17 +68,9 @@ contributes:
       filecolor: "templelinkblue"
       citecolor: "templelinkblue"
       urlcolor: "templelinkblue"
-      include-in-header:
-        text: |
-          \definecolor{templecherry}{HTML}{a41e35}
-          \definecolor{templeNightOwl}{HTML}{005a70}
-          \definecolor{templeBlack}{HTML}{000000}
-          \definecolor{templeBookNook}{HTML}{fff2e8}
-          \definecolor{templelinkblue}{HTML}{0563c1}
-          % CBE address at left, Temple T at right, bottoms aligned.
-          \newcommand{\templefooterlogo}{%
-            \noindent\begin{minipage}[b]{0.72\linewidth}\footerblock\end{minipage}%
-            \hfill\begin{minipage}[b]{0.24\linewidth}\raggedleft\logoblock\end{minipage}}
+      # templelinkblue, the other Temple colours, and \templefooterlogo are
+      # defined in ../titlepage/pandoc.tex, not include-in-header, so a
+      # document that sets its own include-in-header still compiles.
 
       # bg-image theme: cherry corner with the Temple T at upper left,
       # CBE mailing address and Temple T at the bottom.

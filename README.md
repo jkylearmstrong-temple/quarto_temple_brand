@@ -69,6 +69,8 @@ format:
 ---
 ```
 
+The `temple-pdf` title page shows the cherry corner graphic by default. Set `titlepage-corner: false` in a document's YAML to drop it; the title moves up to a 1in top margin.
+
 To match figures to the brand in R, use TempleCBE's `theme_temple()`, `scale_colour_temple()`, and `scale_fill_temple()`.
 
 Format settings live in `_extensions/temple/_extension.yml`, not `brand.yml`: Quarto reads only `defaults.bootstrap` and `defaults.quarto` from a brand file, so per-format keys there are ignored.

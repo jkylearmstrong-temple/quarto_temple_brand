@@ -2,6 +2,11 @@
 
 All notable changes to the Temple University Quarto Brand Extension will be documented in this file.
 
+## Unreleased
+
+### Added
+- **`titlepage-corresponding-only`.** Set `titlepage-corresponding-only: true` in a document's metadata to list only authors marked `corresponding: true` under the `temple-pdf` title page's Correspondence heading. Without it, every author with an email is listed, as before.
+
 ## [1.1.0] - 2026-09-13
 
 ### Added

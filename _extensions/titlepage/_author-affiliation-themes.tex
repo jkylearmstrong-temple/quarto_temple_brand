@@ -92,19 +92,19 @@ $if(false)$
 $endif$
 $for(by-author)$$if(by-author.email)$$if(titlepage-corresponding-only)$$if(by-author.attributes.corresponding)$\titlepagecorrespondencetrue$endif$$else$\titlepagecorrespondencetrue$endif$$endif$$endfor$
 \iftitlepagecorrespondence
-\par\vspace{1\baselineskip}\hangindent=0pt
-{\bfseries\underline{Correspondence:}}
-\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
-$for(by-author)$$if(by-author.email)$
+\vspace{1\baselineskip}
+\par\noindent\textit{Correspondence:}
+$for(by-author)$
+$if(by-author.email)$
 $if(titlepage-corresponding-only)$
 $if(by-author.attributes.corresponding)$
-\item \href{mailto:$by-author.email$}{\nolinkurl{$by-author.email$}}$if(by-author.orcid)$~|~\href{https://orcid.org/$by-author.orcid$}{$by-author.orcid$}$endif$
+\par\noindent\hangindent=1em $by-author.name.literal$, \href{mailto:$by-author.email$}{\nolinkurl{$by-author.email$}}$if(by-author.orcid)$~|~\href{https://orcid.org/$by-author.orcid$}{$by-author.orcid$}$endif$
 $endif$
 $else$
-\item \href{mailto:$by-author.email$}{\nolinkurl{$by-author.email$}}$if(by-author.orcid)$~|~\href{https://orcid.org/$by-author.orcid$}{$by-author.orcid$}$endif$
+\par\noindent\hangindent=1em $by-author.name.literal$, \href{mailto:$by-author.email$}{\nolinkurl{$by-author.email$}}$if(by-author.orcid)$~|~\href{https://orcid.org/$by-author.orcid$}{$by-author.orcid$}$endif$
 $endif$
-$endif$$endfor$
-\end{itemize}
+$endif$
+$endfor$
 \fi
 $endif$
 }}

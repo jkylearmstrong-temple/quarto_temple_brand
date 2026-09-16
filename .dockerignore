@@ -1,0 +1,13 @@
+.git
+.github
+.gitignore
+.DS_Store
+*.html
+*.pdf
+*.qmd.out
+_site
+_quarto.yml.bak
+*.Rproj
+*.Rhistory
+.Rdata
+.Rapp.history

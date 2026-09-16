@@ -123,6 +123,25 @@ If you are developing or modifying the brand extension itself in this repository
 3. Check the compiled `example.html` and `example.pdf`.
 4. If you change the color palette, update TempleCBE's copy (`inst/brand/brand.yml` and `temple_colors()`) to match.
 
+### Docker
+
+A [`Dockerfile`](Dockerfile) is provided for rendering `temple-html`, `temple-pdf`, `temple-typst`, and `temple-revealjs` without a local Quarto/LaTeX install. Its LaTeX package list mirrors [`ci.yml`](.github/workflows/ci.yml), which is what actually validates that `example.qmd` (including `temple-pdf`'s `fontspec`/TikZ-based title page) renders successfully.
+
+**Before building, pull Git LFS content.** `_extensions/titlepage/{fonts,images}` are tracked with Git LFS (see [`.gitattributes`](.gitattributes)). `docker build` only copies whatever bytes are already in your local checkout — it does not fetch LFS content itself:
+
+```bash
+git lfs pull
+docker build -t temple-quarto:latest .
+```
+
+If you build from a checkout where LFS was never pulled (a fresh clone without `git-lfs` installed, or a GitHub "Download ZIP"), the font/image files are small pointer stubs instead of real data. The Dockerfile checks for this and fails the build with a clear message rather than letting it surface later as a confusing "font not found" error mid-render.
+
+Run it against a local project:
+
+```bash
+docker run --rm -v $(pwd):/project temple-quarto:latest render myfile.qmd
+```
+
 ---
 
 ## Brand Review Workflow
